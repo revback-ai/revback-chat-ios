@@ -1,0 +1,30 @@
+/* Internal UI spec, §8 — widget strings (en), verbatim */
+"rb_title" = "Chat";
+"rb_placeholder" = "Type a message…";
+"rb_send" = "Send";
+"rb_close" = "Minimize chat";
+"rb_failed" = "Not delivered — click to retry";
+"rb_not_configured" = "Chat is temporarily unavailable";
+"rb_attachment" = "Attachment";
+"rb_deleted" = "Message deleted";
+"rb_attach" = "Attach files";
+"rb_attach_remove" = "Remove file";
+"rb_attach_media" = "Photo or Video";
+"rb_attach_file" = "File";
+"rb_download" = "Download";
+"rb_attach_too_big" = "File is too large";
+"rb_attach_failed" = "Could not attach the file";
+"rb_attach_limit" = "No more than 10 files per message";
+"rb_empty_hint" = "Write to us — we will reply!";
+/* outside §8: accessibility action label on an undelivered bubble (§12 items 40/42) */
+"rb_cancel_sending" = "Cancel sending";
+"rb_offline" = "No connection";
+"rb_online" = "Back online";
+"rb_refresh" = "Refresh";
+/* outside §8 — tolerant parsing stubs */
+"rb_unreadable" = "Could not display the message";
+"rb_attachment_unsupported" = "This file type is not supported";
+/* outside §8: VoiceOver announcement after a three-finger scroll of the list */
+"rb_page_of" = "Page %1$d of %2$d";
+/* §8, §12 item 83: accessibility label of a video in the composer chip and in the list — "Video, <duration>, <name>" */
+"rb_video" = "Video";

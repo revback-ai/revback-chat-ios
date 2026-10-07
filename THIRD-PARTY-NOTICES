@@ -1,0 +1,103 @@
+RevbackChat SDK for iOS — уведомления о стороннем программном обеспечении
+THIRD-PARTY SOFTWARE NOTICES
+
+Сам RevbackChat SDK распространяется по Apache License 2.0 (файл LICENSE в этом
+репозитории). Настоящий файл перечисляет стороннее ПО, которое входит в поставку,
+и выполняет требование пункта 4 Apache License 2.0: при распространении в бинарной
+форме сохранять уведомления об авторстве и лицензиях используемых компонентов.
+
+This SDK is licensed under the Apache License 2.0 (see LICENSE). This file lists the
+third-party software included in the distribution, as required by section 4 of the
+Apache License 2.0 for redistribution in binary form.
+
+--------------------------------------------------------------------------------
+ЧТО ИМЕННО ВХОДИТ В ПОСТАВКУ
+--------------------------------------------------------------------------------
+
+Бинарный артефакт `RevbackChatCore.xcframework` — СТАТИЧЕСКИЙ фреймворк. Код
+перечисленных ниже библиотек скомпилирован внутрь него: интегратор получает их
+вместе с нашим бинарником, отдельными пакетами они не подключаются.
+
+Swift-исходники пакета (`Sources/`) сторонних зависимостей не имеют.
+
+--------------------------------------------------------------------------------
+КОМПОНЕНТЫ, СКОМПИЛИРОВАННЫЕ В RevbackChatCore.xcframework
+--------------------------------------------------------------------------------
+
+Все перечисленные компоненты распространяются по Apache License 2.0. Её полный
+текст совпадает с текстом файла LICENSE в этом репозитории и доступен по адресу
+https://www.apache.org/licenses/LICENSE-2.0.txt
+
+1. Kotlin Standard Library и рантайм Kotlin/Native — 2.2.21
+   Copyright (c) JetBrains s.r.o. and Kotlin Programming Language contributors
+   Apache License 2.0 — https://github.com/JetBrains/kotlin/tree/master/license
+   https://github.com/JetBrains/kotlin
+
+2. kotlinx.coroutines — 1.10.2
+   Copyright (c) JetBrains s.r.o. and contributors
+   Apache License 2.0 — https://www.apache.org/licenses/LICENSE-2.0.txt
+   https://github.com/Kotlin/kotlinx.coroutines
+
+3. kotlinx-atomicfu — 0.29.0
+   Copyright (c) JetBrains s.r.o. and contributors
+   Apache License 2.0 — https://www.apache.org/licenses/LICENSE-2.0.txt
+   https://github.com/Kotlin/kotlinx-atomicfu
+
+4. kotlinx.serialization — 1.9.0
+   Copyright (c) JetBrains s.r.o. and contributors
+   Apache License 2.0 — https://www.apache.org/licenses/LICENSE-2.0.txt
+   https://github.com/Kotlin/kotlinx.serialization
+
+5. kotlinx-io — 0.8.0
+   Copyright (c) JetBrains s.r.o. and contributors
+   Apache License 2.0 — https://www.apache.org/licenses/LICENSE-2.0.txt
+   https://github.com/Kotlin/kotlinx-io
+
+6. Ktor — 3.3.3
+   Copyright (c) 2014-2024 JetBrains s.r.o and contributors
+   Apache License 2.0 — https://www.apache.org/licenses/LICENSE-2.0.txt
+   https://github.com/ktorio/ktor
+
+7. SQLDelight — 2.2.1
+   Copyright (c) Square, Inc.
+   Apache License 2.0 — https://www.apache.org/licenses/LICENSE-2.0.txt
+   https://github.com/sqldelight/sqldelight
+
+8. SQLiter — 1.3.3
+   Copyright (c) Touchlab, Inc.
+   Apache License 2.0 — https://www.apache.org/licenses/LICENSE-2.0.txt
+   https://github.com/touchlab/SQLiter
+
+9. Stately — 2.1.0
+   Copyright (c) 2018 Touchlab, Inc.
+   Apache License 2.0 — https://www.apache.org/licenses/LICENSE-2.0.txt
+   https://github.com/touchlab/Stately
+
+10. SKIE runtime (runtime-kotlin, runtime-swift) — 0.10.14
+    Copyright (c) Touchlab, Inc.
+    Apache License 2.0 — https://www.apache.org/licenses/LICENSE-2.0.txt
+    https://github.com/touchlab/SKIE
+
+Версия относится ко всем модулям проекта, которые попадают в сборку фреймворка
+(например, для Ktor это `ktor-client-core`, `ktor-client-darwin`,
+`ktor-client-websockets` и их зависимости внутри того же проекта — лицензия и
+правообладатель у всех модулей одни).
+
+--------------------------------------------------------------------------------
+ЧТО В ПОСТАВКУ НЕ ВХОДИТ
+--------------------------------------------------------------------------------
+
+Системные библиотеки Apple (Foundation, CFNetwork, `libsqlite3` и прочие),
+с которыми линкуется фреймворк, поставляются вместе с iOS и в наш артефакт не
+копируются. Их условия определяет соглашение Apple с разработчиком.
+
+--------------------------------------------------------------------------------
+КАК ЭТОТ СПИСОК ПРОВЕРЕН
+--------------------------------------------------------------------------------
+
+Состав получен из объявленных зависимостей модуля ядра под таргеты iOS
+(`iosArm64`, `iosSimulatorArm64`, `iosX64`) и их транзитивного замыкания по POM
+соответствующих артефактов; название лицензии и правообладатель взяты из POM
+и файлов LICENSE/заголовков исходников самих проектов. Присутствие каждого
+проекта в собранном бинарнике дополнительно подтверждено разбором статического
+архива фреймворка.

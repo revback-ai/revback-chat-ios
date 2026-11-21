@@ -20,7 +20,7 @@ let package = Package(
         .binaryTarget(
             name: "RevbackChatCore",
             url: "https://github.com/revback-ai/revback-chat-ios/releases/download/0.1.1/RevbackChatCore.xcframework.zip",
-            checksum: "cb9351a7f910a43cbb6e9233e9d6d23af53088159d33dc24768be6671929e340"
+            checksum: "8d7102cb85e775f1fd86294683c8046dd9891c8c66dfdcd8996f5e92b026d312"
         ),
         // Заглушка без кода: доносит системную libsqlite3 до продукта «только ядро»
         // (подробности — в комментарии Sources/RevbackChatCoreLink/RevbackChatCoreLink.swift).

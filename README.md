@@ -77,7 +77,7 @@ SDK не требует переделывать сетевой слой при�
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/revback-ai/revback-chat-ios", .upToNextMinor(from: "0.1.0"))
+    .package(url: "https://github.com/revback-ai/revback-chat-ios", .upToNextMinor(from: "0.1.1"))
 ],
 targets: [
     .target(

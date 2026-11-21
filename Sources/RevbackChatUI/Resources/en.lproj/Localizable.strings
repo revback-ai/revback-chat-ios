@@ -28,3 +28,4 @@
 "rb_page_of" = "Page %1$d of %2$d";
 /* §8, §12 item 83: accessibility label of a video in the composer chip and in the list — "Video, <duration>, <name>" */
 "rb_video" = "Video";
+"rb_uploading" = "uploading";

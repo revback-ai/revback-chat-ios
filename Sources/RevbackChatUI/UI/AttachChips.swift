@@ -75,17 +75,20 @@ struct ChipItem: View {
         }
     }
 
-    /// §9: фото — имя файла; видео — «Видео, <длительность>, <имя>»; документ — имя и размер.
+    /// §9: фото — имя файла; видео — «Видео, <длительность>, <имя>»; документ — имя и размер. Пока файл грузится —
+    /// в конце «, загружается» (паритет Android): ход загрузки на плитке VoiceOver не видит.
     static func accessibilityLabel(_ chip: ChipRow, strings: Strings) -> String {
+        let base: String
         switch chip.media.kind {
         case .video:
-            return MediaRules.videoAccessibilityLabel(video: strings.video, durationMs: chip.media.durationMs,
+            base = MediaRules.videoAccessibilityLabel(video: strings.video, durationMs: chip.media.durationMs,
                                                       name: chip.fileName)
         case .photo:
-            return chip.fileName
+            base = chip.fileName
         case .file:
-            return "\(chip.fileName), \(MediaRules.fileSizeText(chip.media.byteCount))"
+            base = "\(chip.fileName), \(MediaRules.fileSizeText(chip.media.byteCount))"
         }
+        return chip.uploading && !strings.uploading.isEmpty ? "\(base), \(strings.uploading)" : base
     }
 
     /// Круг 20 в углу topTrailing зоны касания 44, а сама зона привязана к углу плашки и сдвинута наружу ровно на
@@ -154,6 +157,7 @@ private extension View {
 /// Плитка 72×72: миниатюра (обрезка по центру) или заглушка; у видео — «плей» и длительность.
 struct ChipTile: View {
     let chip: ChipRow
+    @State private var showsUpload = false
 
     var body: some View {
         ZStack {
@@ -172,8 +176,13 @@ struct ChipTile: View {
                     .accessibilityHidden(true)
             }
             // Миниатюры нет (сбой извлечения) — плитка-заглушка: фон плашки; у видео остаются «плей» и длительность.
-            if chip.media.kind == .video {
+            // Пока файл грузится — по центру ход загрузки (паритет Android), у видео вместо «плей».
+            if chip.uploading && showsUpload {
+                UploadBadge(size: Theme.tilePlaySize)
+            } else if chip.media.kind == .video {
                 PlayBadge(size: Theme.tilePlaySize)
+            }
+            if chip.media.kind == .video {
                 if let duration = MediaRules.formatDuration(ms: chip.media.durationMs) {
                     DurationBadge(text: duration, fontSize: Theme.tileDurationFontSize)
                         .padding(Theme.tileDurationInset)
@@ -185,18 +194,27 @@ struct ChipTile: View {
         .clipShape(RoundedRectangle(cornerRadius: Theme.tileRadius))
         .overlay(RoundedRectangle(cornerRadius: Theme.tileRadius)
             .strokeBorder(Theme.hairline, lineWidth: Theme.tileBorderWidth))
+        .delayedUploadIndicator(chip.uploading, shown: $showsUpload)
     }
 }
 
 /// Карточка документа 200×72 (как Android): значок 24, имя (обрезка посередине), размер.
 struct FileCard: View {
     let chip: ChipRow
+    @State private var showsUpload = false
 
     var body: some View {
         HStack(spacing: Theme.fileCardGap) {
-            FileGlyph()
-                .stroke(Theme.chipText, style: Theme.glyphStroke)
-                .frame(width: Theme.fileCardIconSize, height: Theme.fileCardIconSize)
+            // Пока файл грузится — ход загрузки на месте значка, тем же цветом и в тех же габаритах (паритет Android).
+            Group {
+                if chip.uploading && showsUpload {
+                    UploadSpinner(color: Theme.chipText, lineWidth: 2)
+                        .padding(Theme.fileCardIconSize * 0.125)
+                } else {
+                    FileGlyph().stroke(Theme.chipText, style: Theme.glyphStroke)
+                }
+            }
+            .frame(width: Theme.fileCardIconSize, height: Theme.fileCardIconSize)
             VStack(alignment: .leading, spacing: Theme.fileCardLineGap) {
                 Text(chip.fileName)
                     .font(.system(size: Theme.fileCardNameFontSize))
@@ -216,6 +234,24 @@ struct FileCard: View {
         .background(RoundedRectangle(cornerRadius: Theme.tileRadius).fill(Theme.chipBackground))
         .overlay(RoundedRectangle(cornerRadius: Theme.tileRadius)
             .strokeBorder(Theme.hairline, lineWidth: Theme.tileBorderWidth))
+        .delayedUploadIndicator(chip.uploading, shown: $showsUpload)
+    }
+}
+
+/// Задержка показа хода загрузки (паритет Android `UPLOAD_INDICATOR_DELAY_MS`): мгновенная заливка не мигает
+/// индикатором. Загрузка кончилась — индикатор снимается сразу.
+enum UploadIndicator {
+    static let delayNanoseconds: UInt64 = 300_000_000
+}
+
+private extension View {
+    func delayedUploadIndicator(_ uploading: Bool, shown: Binding<Bool>) -> some View {
+        task(id: uploading) {
+            shown.wrappedValue = false
+            guard uploading else { return }
+            try? await Task.sleep(nanoseconds: UploadIndicator.delayNanoseconds)
+            if !Task.isCancelled { shown.wrappedValue = true }
+        }
     }
 }
 
@@ -233,6 +269,42 @@ struct PlayBadge: View {
         }
         .frame(width: size, height: size)
         .accessibilityHidden(true)
+    }
+}
+
+/// Ход загрузки на плитке: круг той же подложки, что у «плей» (`mediaScrimAlpha`), с белой вращающейся дугой.
+/// Без процента: до сервера байты доходят через буфер HTTP/2 (до 1 МБ) — счёт отправленного показывал бы 100 % задолго
+/// до конца, а на iOS ядро прогресс заливки и не отдаёт (`KtorHttpTransport`). Паритет Android `UploadBadge`.
+struct UploadBadge: View {
+    let size: CGFloat
+
+    var body: some View {
+        ZStack {
+            Circle().fill(Color.black.opacity(Double(Theme.mediaScrimAlpha)))
+            UploadSpinner(color: .white, lineWidth: 2)
+                .padding(size * 0.2)
+        }
+        .frame(width: size, height: size)
+        .accessibilityHidden(true)
+    }
+}
+
+/// Неопределённый ход: дуга в три четверти круга, оборот за `period` секунд.
+struct UploadSpinner: View {
+    let color: Color
+    let lineWidth: CGFloat
+    static let period: Double = 0.9
+
+    @State private var spinning = false
+
+    var body: some View {
+        Circle()
+            .trim(from: 0, to: 0.75)
+            .stroke(color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+            .rotationEffect(.degrees(spinning ? 360 : 0))
+            .animation(.linear(duration: Self.period).repeatForever(autoreverses: false), value: spinning)
+            .onAppear { spinning = true }
+            .accessibilityHidden(true)
     }
 }
 

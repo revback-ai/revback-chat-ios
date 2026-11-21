@@ -19,8 +19,8 @@ let package = Package(
         // Адрес и checksum подставляет релизный скрипт монорепо revback-chat-sdk.
         .binaryTarget(
             name: "RevbackChatCore",
-            url: "https://github.com/revback-ai/revback-chat-ios/releases/download/0.1.0/RevbackChatCore.xcframework.zip",
-            checksum: "459a4266379d0879cbeb7c06b48148eb9e463fd39f3ca76c4ddf8cf99dc45982"
+            url: "https://github.com/revback-ai/revback-chat-ios/releases/download/0.1.1/RevbackChatCore.xcframework.zip",
+            checksum: "cb9351a7f910a43cbb6e9233e9d6d23af53088159d33dc24768be6671929e340"
         ),
         // Заглушка без кода: доносит системную libsqlite3 до продукта «только ядро»
         // (подробности — в комментарии Sources/RevbackChatCoreLink/RevbackChatCoreLink.swift).

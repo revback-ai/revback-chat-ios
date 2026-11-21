@@ -41,6 +41,8 @@ enum L10n {
         case pageOf = "rb_page_of"
         /// Вне §8: ярлык доступности плитки и обложки видео — «Видео, <длительность>, <имя>».
         case video = "rb_video"
+        /// Вне §8: хвост ярлыка доступности плашки, пока файл грузится («IMG_0001.jpg, загружается»).
+        case uploading = "rb_uploading"
     }
 
     static func languageCode(preferred: [String]) -> String {
@@ -102,7 +104,8 @@ enum L10n {
             refresh: string(.refresh, language: language),
             unreadable: string(.unreadable, language: language),
             attachmentUnsupported: string(.attachmentUnsupported, language: language),
-            video: string(.video, language: language)
+            video: string(.video, language: language),
+            uploading: string(.uploading, language: language)
         )
     }
 }
@@ -136,4 +139,6 @@ struct Strings: Equatable {
     var attachmentUnsupported: String
     /// Ярлык доступности видео.
     var video: String
+    /// Хвост ярлыка доступности плашки, пока файл грузится.
+    var uploading: String = ""
 }
